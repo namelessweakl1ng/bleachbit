@@ -319,7 +319,18 @@ class BleachbitTestCase(unittest.TestCase):
             with open(bleachbit.options_file, 'wb') as f:
                 f.write(self._options_file_snapshot)
         elif os.path.exists(bleachbit.options_file):
-            os.remove(bleachbit.options_file)
+            print(f"[DEBUG] Removing {bleachbit.options_file}")
+
+            try:
+                os.remove(bleachbit.options_file)
+                print("[DEBUG] Successfully removed options file")
+            except Exception as e:
+                print(f"[DEBUG] os.remove failed: {e!r}")
+
+                import traceback
+                traceback.print_exc()
+
+                raise
         bleachbit.Options.options.restore()
         # cancel the flush timer restore() re-arms when the file has no
         # matching version, else it fires during a later test

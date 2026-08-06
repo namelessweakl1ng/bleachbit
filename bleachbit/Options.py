@@ -118,7 +118,12 @@ def init_configuration(*, log=True):
     if os.path.lexists(bleachbit.options_file):
         if log:
             logger.debug("Deleting configuration: %s", bleachbit.options_file)
-        os.remove(bleachbit.options_file)
+        try:
+            os.remove(bleachbit.options_file)
+        except PermissionError as e:
+            print(f"[DEBUG] Failed to remove {bleachbit.options_file}")
+            print(f"[DEBUG] Exception: {e}")
+            raise
 
     with open(
         bleachbit.options_file,
