@@ -115,18 +115,24 @@ def path_to_option(pathname):
 
 def init_configuration(*, log=True):
     """Initialize an empty configuration, if necessary"""
-    if not os.path.exists(bleachbit.options_dir):
-        General.makedirs(bleachbit.options_dir)
     if os.path.lexists(bleachbit.options_file):
         if log:
-            logger.debug('Deleting configuration: %s', bleachbit.options_file)
+            logger.debug("Deleting configuration: %s", bleachbit.options_file)
         os.remove(bleachbit.options_file)
-    with open(bleachbit.options_file, 'w', encoding='utf-8-sig', errors='surrogateescape') as f_ini:
-        f_ini.write('[bleachbit]\n')
+
+    with open(
+        bleachbit.options_file,
+        "w",
+        encoding="utf-8-sig",
+        errors="surrogateescape",
+    ) as f_ini:
+        f_ini.write("[bleachbit]\n")
         if IS_WINDOWS and bleachbit.portable_mode:
-            f_ini.write('[Portable]\n')
+            f_ini.write("[Portable]\n")
+
     for section in options.config.sections():
         options.config.remove_section(section)
+
     options.restore()
 
 
@@ -210,8 +216,19 @@ class Options:
             if not os.path.exists(bleachbit.options_dir):
                 General.makedirs(bleachbit.options_dir)
             mkfile = not os.path.exists(bleachbit.options_file)
-            with open(bleachbit.options_file, 'w', encoding='utf-8-sig', errors='surrogateescape') as _file:
+
+            print(f"[DEBUG] Opening for write: {bleachbit.options_file}")
+
+            with open(
+                bleachbit.options_file,
+                'w',
+                encoding='utf-8-sig',
+                errors='surrogateescape'
+            ) as _file:
                 self.config.write(_file)
+
+            print(f"[DEBUG] Closed write: {bleachbit.options_file}")
+
             if mkfile and General.sudo_mode():
                 General.chownself(bleachbit.options_file)
         except (OSError, IOError, PermissionError) as e:
@@ -476,8 +493,17 @@ class Options:
             for section in self.config.sections():
                 self.config.remove_section(section)
             try:
-                with open(bleachbit.options_file, 'r', encoding='utf-8-sig', errors='surrogateescape') as _file:
+                print(f"[DEBUG] Opening for read: {bleachbit.options_file}")
+
+                with open(
+                    bleachbit.options_file,
+                    'r',
+                    encoding='utf-8-sig',
+                    errors='surrogateescape'
+                ) as _file:
                     self.config.read_file(_file, bleachbit.options_file)
+
+                print(f"[DEBUG] Closed read: {bleachbit.options_file}")
             except FileNotFoundError:
                 if not bleachbit.options_file.startswith('/tmp'):
                     logger.debug("Configuration file does not exist yet: %s",
