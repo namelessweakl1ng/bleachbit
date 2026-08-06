@@ -222,7 +222,7 @@ class Options:
                 General.makedirs(bleachbit.options_dir)
             mkfile = not os.path.exists(bleachbit.options_file)
 
-            print(f"[DEBUG] Opening for write: {bleachbit.options_file}")
+            logger.warning("[DEBUG] Opening for write: %s", bleachbit.options_file)
 
             with open(
                 bleachbit.options_file,
@@ -232,7 +232,7 @@ class Options:
             ) as _file:
                 self.config.write(_file)
 
-            print(f"[DEBUG] Closed write: {bleachbit.options_file}")
+            logger.warning("[DEBUG] Closed write: %s", bleachbit.options_file)
 
             if mkfile and General.sudo_mode():
                 General.chownself(bleachbit.options_file)
@@ -498,7 +498,7 @@ class Options:
             for section in self.config.sections():
                 self.config.remove_section(section)
             try:
-                print(f"[DEBUG] Opening for read: {bleachbit.options_file}")
+                logger.warning("[DEBUG] Opening for read: %s", bleachbit.options_file)
 
                 with open(
                     bleachbit.options_file,
@@ -508,7 +508,7 @@ class Options:
                 ) as _file:
                     self.config.read_file(_file, bleachbit.options_file)
 
-                print(f"[DEBUG] Closed read: {bleachbit.options_file}")
+                logger.warning("[DEBUG] Closed read: %s", bleachbit.options_file)
             except FileNotFoundError:
                 if not bleachbit.options_file.startswith('/tmp'):
                     logger.debug("Configuration file does not exist yet: %s",
